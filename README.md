@@ -42,20 +42,9 @@ mac-clean clean /path/to/dir --force
 
 ## Development
 
-### Setup (pip)
-1. Clone the repository.
-2. Install development dependencies:
-   ```bash
-   pip install -e ".[dev]"
-   ```
-3. Install pre-commit hooks:
-   ```bash
-   pre-commit install
-   ```
-
 ### Setup (uv)
 1. Clone the repository.
-2. Sync the environment (creates venv and installs all dependencies):
+2. Sync the environment (creates venv and installs all dependencies and dev tools):
    ```bash
    uv sync
    ```

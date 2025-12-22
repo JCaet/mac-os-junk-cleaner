@@ -16,8 +16,8 @@ We love new ideas! If you have a feature suggestion, please open an issue to dis
 ### Pull Requests
 1. Fork the repository.
 2. Create a new branch: `git checkout -b feature/your-feature-name`.
-3. Make your changes and ensure tests pass: `pytest`.
-4. Format and lint your code: `ruff format .` and `ruff check .`.
+3. Make your changes and ensure tests pass: `uv run pytest`.
+4. Format and lint your code: `uv run ruff format .` and `uv run ruff check .`.
 5. Submit a pull request.
 
 ## Development Environment Setup
