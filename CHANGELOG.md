@@ -15,3 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rich-formatted output for better readability.
 - Basic test suite.
 - Development setup for both `pip` and `uv`.
+
+### Changed
+- Minimum Python version increased to 3.9 to ensure build compatibility.
