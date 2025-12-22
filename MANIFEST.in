@@ -1,3 +1,0 @@
-graft src
-exclude tests/data
-global-exclude *.py[cod] __pycache__ .DS_Store
