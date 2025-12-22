@@ -47,6 +47,7 @@ where = ["src"]
 [tool.ruff]
 line-length = 88
 target-version = "py38"
+src = ["src"]
 
 [tool.ruff.lint]
 select = [

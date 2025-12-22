@@ -2,8 +2,9 @@ from io import StringIO
 
 import pytest
 from click.testing import CliRunner
-from macos_junk_cleaner.main import main
 from rich.console import Console
+
+from macos_junk_cleaner.main import main
 
 
 @pytest.fixture
