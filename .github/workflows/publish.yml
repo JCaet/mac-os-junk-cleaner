@@ -35,13 +35,24 @@ jobs:
       - name: Python Semantic Release
         id: release
         run: |
-          uv run semantic-release version
-          uv run semantic-release publish
+          output=$(uv run semantic-release version 2>&1) || true
+          echo "$output"
+          if echo "$output" | grep -q "No release will be made"; then
+            echo "released=false" >> $GITHUB_OUTPUT
+          else
+            echo "released=true" >> $GITHUB_OUTPUT
+            uv run semantic-release publish
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_PAT }}
 
+      - name: Build package
+        if: steps.release.outputs.released == 'true'
+        run: uv build
+
       - name: Publish to PyPI
+        if: steps.release.outputs.released == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
