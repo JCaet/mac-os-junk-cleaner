@@ -35,13 +35,14 @@ jobs:
       - name: Python Semantic Release
         id: release
         run: |
-          output=$(uv run semantic-release version 2>&1) || true
-          echo "$output"
-          if echo "$output" | grep -q "No release will be made"; then
-            echo "released=false" >> $GITHUB_OUTPUT
-          else
+          # Run versioning (dry-run if needed, but here we want to actually bump if applicable)
+          # We use --vcs-release=false to avoid pushing yet if we want to control the flow
+          if uv run semantic-release version --no-vcs-release; then
             echo "released=true" >> $GITHUB_OUTPUT
             uv run semantic-release publish
+          else
+            echo "released=false" >> $GITHUB_OUTPUT
+            echo "No release needed or error occurred"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

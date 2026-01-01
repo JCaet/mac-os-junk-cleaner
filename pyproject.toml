@@ -72,7 +72,7 @@ python_files = "test_*.py"
 addopts = "--cov=src --cov-report=term-missing"
 
 [tool.semantic_release]
-version_variable = [
+version_variables = [
     "src/macos_junk_cleaner/__init__.py:__version__",
 ]
 version_toml = [
@@ -83,6 +83,20 @@ upload_to_pypi = true
 upload_to_release = true
 build_command = "uv build"
 tag_format = "release-{version}"
+logging_use_stderr = true
+
+[tool.semantic_release.changelog]
+changelog_file = "CHANGELOG.md"
+exclude_commit_patterns = []
+
+[tool.semantic_release.changelog.default_templates]
+output_format = "md"
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "style", "test"]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
+default_bump_level = 0
 
 [dependency-groups]
 dev = [
