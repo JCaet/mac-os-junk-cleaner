@@ -1,0 +1,90 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Lint with Ruff
+        run: uv run ruff check .
+
+      - name: Format check with Ruff
+        run: uv run ruff format . --check
+
+      - name: Test with pytest
+        run: uv run pytest
+
+  release:
+    name: Release
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency: release
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Python Semantic Release
+        id: release
+        run: |
+          # Use the modern v10 command structure
+          # No error masking (|| true) here; if it fails, the job fails
+          uv run semantic-release version --no-vcs-release
+          
+          # Check if a new version was actually created by looking at pyproject.toml
+          # or via the tool's logs. A simpler way is to check if it published anything.
+          # For now, we always try to publish; it will skip if no new version.
+          uv run semantic-release publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Build and Publish to PyPI
+        # This step is often handled by semantic-release itself if configured (upload_to_pypi=true)
+        # However, keeping it explicit or relying on the tool is a choice.
+        # Given the previous config had upload_to_pypi=true, we rely on semantic-release publish.
+        run: echo "Semantic release publish step completed."
