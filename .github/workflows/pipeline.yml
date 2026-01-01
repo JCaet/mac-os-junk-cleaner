@@ -63,7 +63,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Install dependencies
         run: uv sync --all-extras --dev
@@ -71,20 +71,10 @@ jobs:
       - name: Python Semantic Release
         id: release
         run: |
-          # Use the modern v10 command structure
-          # No error masking (|| true) here; if it fails, the job fails
           uv run semantic-release version --no-vcs-release
           
-          # Check if a new version was actually created by looking at pyproject.toml
-          # or via the tool's logs. A simpler way is to check if it published anything.
-          # For now, we always try to publish; it will skip if no new version.
+          # try to publish; it will skip if no new version.
           uv run semantic-release publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_PAT }}
-
-      - name: Build and Publish to PyPI
-        # This step is often handled by semantic-release itself if configured (upload_to_pypi=true)
-        # However, keeping it explicit or relying on the tool is a choice.
-        # Given the previous config had upload_to_pypi=true, we rely on semantic-release publish.
-        run: echo "Semantic release publish step completed."
