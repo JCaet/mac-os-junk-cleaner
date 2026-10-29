@@ -81,7 +81,8 @@ version_toml = [
 branch = "main"
 upload_to_pypi = false
 upload_to_release = true
-build_command = "uv build"
+build_command = "uv lock && uv build"
+assets = ["uv.lock"]
 tag_format = "release-{version}"
 logging_use_stderr = true
 
